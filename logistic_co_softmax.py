@@ -127,8 +127,8 @@ class Softmax(DataSet):
     def func_softmax(self, X_i, theta):
         """
         softmax函数
-        :param X_i:
-        :param theta:
+        :param X_i: 第i条数据样本
+        :param theta: 参数
         :return: softmax
         """
         sum = 0
@@ -139,7 +139,7 @@ class Softmax(DataSet):
     def func_loss(self, theta):
         """
         损失函数
-        :param theta:
+        :param theta: 参数
         :return: loss
         """
         tmp = 0
