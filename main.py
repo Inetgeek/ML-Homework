@@ -1,5 +1,11 @@
-import numpy as np
-
+#!/usr/bin/python3
+# coding: utf-8
+"""
+@author: Colyn
+@group: NJUST
+@desc: Logistic Regression & Softmax Regression
+@date: 2022-11-18
+"""
 from utils import *
 from pylab import *
 from matplotlib import pyplot as plt
