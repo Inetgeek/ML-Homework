@@ -20,6 +20,7 @@ class DataSet(object):
         :param file_y: 数据集y文件
         """
         self.epoch = None
+        self.loss = []
         self.data_X = np.loadtxt(file_X, unpack=False)
         self.data_y = np.loadtxt(file_y, unpack=False)
         self.N = self.data_X.shape[0]
@@ -92,7 +93,8 @@ class Logistic(DataSet):
                 sum += (self.train_y[i] - self.func_sigmod(self.train_X[i], theta)) * self.train_X[i]
             theta = pre_theta + sum * self.alpha / self.N
             pre_theta = theta
-        return np.array(theta)[0], self.func_loss(theta)
+            self.loss.append(self.func_loss(theta))
+        return np.array(theta)[0], self.func_loss(theta), self.loss
 
     def func_sgd(self, theta, alpha):
         """
@@ -108,7 +110,8 @@ class Logistic(DataSet):
             theta = pre_theta + self.alpha * (self.train_y[i] - self.func_sigmod(self.train_X[i], theta)) * \
                     self.train_X[i]
             pre_theta = theta
-        return np.array(theta)[0], self.func_loss(theta)
+            self.loss.append(self.func_loss(theta))
+        return np.array(theta)[0], self.func_loss(theta), self.loss
 
 
 class Softmax(DataSet):
@@ -165,8 +168,8 @@ class Softmax(DataSet):
                 sum += tmp * self.train_X[i]  # 2x3
             theta = pre_theta + sum * self.alpha / self.N
             pre_theta = theta
-
-        return np.array(theta), self.func_loss(theta)
+            self.loss.append(self.func_loss(theta))
+        return np.array(theta), self.func_loss(theta), self.loss
 
     def func_sgd(self, theta, alpha):
         """
@@ -182,7 +185,8 @@ class Softmax(DataSet):
             tmp = np.mat(self.alpha * (self.train_y[i] - self.func_softmax(self.train_X[i], theta).T))
             theta = pre_theta + tmp.T * self.train_X[i]
             pre_theta = theta
-        return np.array(theta), self.func_loss(theta)
+            self.loss.append(self.func_loss(theta))
+        return np.array(theta), self.func_loss(theta), self.loss
 
 
 class Perceptron(DataSet):
@@ -238,7 +242,8 @@ class Perceptron(DataSet):
                 sum += (np.zeros([1, 3]) if multi > 0 else self.train_y[i] * self.train_X[i])
             theta = pre_theta + sum * self.alpha / self.N
             pre_theta = theta
-        return np.array(theta)[0], self.func_loss(theta)
+            self.loss.append(self.func_loss(theta))
+        return np.array(theta)[0], self.func_loss(theta), self.loss
 
     def func_sgd(self, theta, alpha):
         """
@@ -254,7 +259,8 @@ class Perceptron(DataSet):
             multi = self.train_y[i] * self.func_perceptron(self.train_X[i], theta)
             theta = pre_theta + self.alpha * (np.zeros([1, 3]) if multi > 0 else self.train_y[i] * self.train_X[i])
             pre_theta = theta
-        return np.array(theta)[0], self.func_loss(theta)
+            self.loss.append(self.func_loss(theta))
+        return np.array(theta)[0], self.func_loss(theta), self.loss
 
 
 class MultiPerceptron(DataSet):
@@ -287,7 +293,6 @@ class MultiPerceptron(DataSet):
         :return: arg_max(theta)
         """
         multi = self.func_perceptron(X_i, theta)
-        # print("multi:", multi)
         return 0 if multi[0] > multi[1] else 1
 
     def func_loss(self, theta):
@@ -301,7 +306,6 @@ class MultiPerceptron(DataSet):
             c_, y_j = self.max_args(self.train_X[i], theta), int(self.train_y[i])
             multi = theta[c_] * self.train_X[i].T - theta[y_j] * self.train_X[i].T  # 1x1
             tmp += (np.zeros([1, 1]) if c_ == y_j else multi)
-            # print("c_:", c_, "y_j:", y_j, "multi:", multi, "tmp:", tmp)
         return np.array(tmp / self.N)[0][0]  # 1x1
 
     def func_gd(self, theta, alpha):
@@ -331,7 +335,8 @@ class MultiPerceptron(DataSet):
                     sum += gdn
                 theta[c] = pre_theta[c] - sum * self.alpha / self.N
                 pre_theta[c] = theta[c]
-        return np.array(theta), self.func_loss(theta)
+            self.loss.append(self.func_loss(theta))
+        return np.array(theta), self.func_loss(theta), self.loss
 
     def func_sgd(self, theta, alpha):
         """
@@ -359,7 +364,8 @@ class MultiPerceptron(DataSet):
                     pass
                 theta[c] = pre_theta[c] - gdn * self.alpha / self.N
                 pre_theta[c] = theta[c]
-        return np.array(theta), self.func_loss(theta)
+            self.loss.append(self.func_loss(theta))
+        return np.array(theta), self.func_loss(theta), self.loss
 
 
 if __name__ == '__main__':
@@ -377,7 +383,6 @@ if __name__ == '__main__':
     p_train_set.set_params(epoch=10000)  # 设置超参数
     mp_train_set = MultiPerceptron(file_X=file_X, file_y=file_y)  # 实例化训练集
     mp_train_set.set_params(epoch=1000)  # 设置超参数
-    print("loss:", mp_train_set.func_loss(mp_theta))
 
     # 开始训练
     # Logistic模型
