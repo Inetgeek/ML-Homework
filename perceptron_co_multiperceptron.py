@@ -376,7 +376,7 @@ if __name__ == '__main__':
     p_train_set = Perceptron(file_X=file_X, file_y=file_y)  # 实例化训练集
     p_train_set.set_params(epoch=10000)  # 设置超参数
     mp_train_set = MultiPerceptron(file_X=file_X, file_y=file_y)  # 实例化训练集
-    mp_train_set.set_params(epoch=1000)  # 设置超参数
+    mp_train_set.set_params(epoch=10000)  # 设置超参数
     print("loss:", mp_train_set.func_loss(mp_theta))
 
     # 开始训练
