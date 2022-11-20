@@ -287,7 +287,6 @@ class MultiPerceptron(DataSet):
         :return: arg_max(theta)
         """
         multi = self.func_perceptron(X_i, theta)
-        # print("multi:", multi)
         return 0 if multi[0] > multi[1] else 1
 
     def func_loss(self, theta):
@@ -301,7 +300,6 @@ class MultiPerceptron(DataSet):
             c_, y_j = self.max_args(self.train_X[i], theta), int(self.train_y[i])
             multi = theta[c_] * self.train_X[i].T - theta[y_j] * self.train_X[i].T  # 1x1
             tmp += (np.zeros([1, 1]) if c_ == y_j else multi)
-            # print("c_:", c_, "y_j:", y_j, "multi:", multi, "tmp:", tmp)
         return np.array(tmp / self.N)[0][0]  # 1x1
 
     def func_gd(self, theta, alpha):
@@ -376,8 +374,7 @@ if __name__ == '__main__':
     p_train_set = Perceptron(file_X=file_X, file_y=file_y)  # 实例化训练集
     p_train_set.set_params(epoch=10000)  # 设置超参数
     mp_train_set = MultiPerceptron(file_X=file_X, file_y=file_y)  # 实例化训练集
-    mp_train_set.set_params(epoch=10000)  # 设置超参数
-    print("loss:", mp_train_set.func_loss(mp_theta))
+    mp_train_set.set_params(epoch=1000)  # 设置超参数
 
     # 开始训练
     # Logistic模型
